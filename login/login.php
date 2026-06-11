@@ -1,3 +1,42 @@
+<?php
+session_start();
+include '../db.php';
+
+$message = "";
+
+if(isset($_POST['submit']))
+{
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $sql = "SELECT * FROM users WHERE email='$email'";
+    $result = mysqli_query($conn, $sql);
+
+    if(mysqli_num_rows($result) > 0)
+    {
+        $user = mysqli_fetch_assoc($result);
+
+        // For plain text password
+        if($password == $user['password'])
+        {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['name'] = $user['name'];
+
+            header("Location: ../user/dashboard.php");
+            exit();
+        }
+        else
+        {
+            $message = "Invalid Password";
+        }
+    }
+    else
+    {
+        $message = "User Not Found";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +45,7 @@
 <title>NØIR Login</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+
 
 <style>
 :root{

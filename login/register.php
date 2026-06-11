@@ -2,36 +2,37 @@
 include '../db.php';
 
 $message = "";
-
 if(isset($_POST['submit']))
 {
     $name = $_POST['name'];
     $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $phone = $_POST['phone'];
+    $gender = $_POST['gender'];
+    $dob = $_POST['dob'];
+    $address = $_POST['address'];
+    $state = $_POST['state'];
+    $city = $_POST['city'];
 
-    $check = mysqli_query(
-        $conn,
-        "SELECT * FROM users WHERE email='$email'"
+    $password = password_hash(
+        $_POST['password'],
+        PASSWORD_DEFAULT
     );
 
-    if(mysqli_num_rows($check) > 0)
+    $sql = "INSERT INTO users
+    (name,email,phone,gender,dob,address,state,city,password)
+    VALUES
+    ('$name','$email','$phone','$gender',
+     '$dob','$address','$state','$city','$password')";
+
+    if(mysqli_query($conn,$sql))
     {
-        $message = "Email already exists!";
+        echo "Registration Successful";
+        header("Location: login.php");
+        exit();
     }
     else
     {
-        $sql = "INSERT INTO users(name,email,password)
-                VALUES('$name','$email','$password')";
-
-        if(mysqli_query($conn,$sql))
-        {
-            header("Location: login.php");
-            exit();
-        }
-        else
-        {
-            $message = mysqli_error($conn);
-        }
+        echo mysqli_error($conn);
     }
 }
 ?>
@@ -73,6 +74,7 @@ body{
 .container{
     display:flex;
     min-height:100vh;
+    margin-top: -40px;
 }
 
 .left{
@@ -111,12 +113,13 @@ body{
 }
 
 .right{
-    width:450px;
+    width:550px;
     background:var(--card);
     display:flex;
     justify-content:center;
     align-items:center;
     padding:40px;
+    margin-right: 100px;
 }
 
 .register-box{
@@ -433,4 +436,4 @@ Already have an account?
 
 </body>
 </html>
-```
+
