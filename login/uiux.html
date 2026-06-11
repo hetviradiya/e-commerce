@@ -1,0 +1,2438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NØIR — Wear the Void</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --black: #080808;
+        --off-white: #f0ede6;
+        --electric: #c8ff00;
+        --red: #ff2d2d;
+        --muted: #3a3a3a;
+        --glass: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--black);
+        color: var(--off-white);
+        font-family: "Inter", sans-serif;
+        overflow-x: hidden;
+      }
+
+      /* CURSOR */
+      .cursor {
+        width: 12px;
+        height: 12px;
+        background: var(--electric);
+        border-radius: 50%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        transition:
+          transform 0.1s,
+          width 0.2s,
+          height 0.2s;
+        mix-blend-mode: difference;
+      }
+      .cursor.expand {
+        width: 48px;
+        height: 48px;
+      }
+
+      /* NOISE OVERLAY */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.6;
+      }
+
+      /* NAV */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px 48px;
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        background: rgba(8, 8, 8, 0.7);
+      }
+
+      .logo {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 2rem;
+        letter-spacing: 0.15em;
+        color: var(--off-white);
+        text-decoration: none;
+      }
+      .logo span {
+        color: var(--electric);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 40px;
+        list-style: none;
+      }
+      .nav-links a {
+        color: rgba(240, 237, 230, 0.5);
+        text-decoration: none;
+        font-size: 0.75rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--electric);
+      }
+
+      .nav-actions {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+      .nav-icon {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--off-white);
+        display: flex;
+        align-items: center;
+        transition: color 0.2s;
+        position: relative;
+      }
+      .nav-icon:hover {
+        color: var(--electric);
+      }
+      .cart-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background: var(--electric);
+        color: var(--black);
+        font-size: 0.6rem;
+        font-weight: 700;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* HERO */
+      .hero {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 120px 48px 80px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-eyebrow {
+        font-size: 0.7rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--electric);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .hero-eyebrow::before {
+        content: "";
+        width: 32px;
+        height: 1px;
+        background: var(--electric);
+      }
+
+      .hero-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(5rem, 9vw, 11rem);
+        line-height: 0.9;
+        letter-spacing: -0.01em;
+        margin-bottom: 32px;
+        position: relative;
+      }
+      .hero-title .italic-line {
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        font-weight: 400;
+        color: transparent;
+        -webkit-text-stroke: 1px var(--off-white);
+        display: block;
+      }
+      .hero-title .solid-line {
+        display: block;
+      }
+
+      .hero-desc {
+        max-width: 340px;
+        color: rgba(240, 237, 230, 0.5);
+        font-size: 0.9rem;
+        line-height: 1.7;
+        margin-bottom: 48px;
+      }
+
+      .hero-cta {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+      .btn-primary {
+        background: var(--electric);
+        color: var(--black);
+        border: none;
+        padding: 16px 36px;
+        font-family: "Inter", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+      }
+      .btn-primary:hover {
+        background: #fff;
+        transform: translate(-2px, -2px);
+        box-shadow: 4px 4px 0 var(--electric);
+      }
+
+      .btn-ghost {
+        background: none;
+        border: 1px solid var(--border);
+        color: var(--off-white);
+        padding: 16px 36px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+      }
+      .btn-ghost:hover {
+        border-color: var(--off-white);
+      }
+
+      .hero-right {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-image-bg {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+      }
+
+      /* SVG Illustration - stylized fashion figure */
+      .hero-figure {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .hero-stats {
+        position: absolute;
+        bottom: 80px;
+        right: 48px;
+        display: flex;
+        gap: 32px;
+        z-index: 10;
+      }
+      .stat {
+        text-align: center;
+      }
+      .stat-num {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 2.5rem;
+        color: var(--electric);
+        display: block;
+        line-height: 1;
+      }
+      .stat-label {
+        font-size: 0.65rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(240, 237, 230, 0.4);
+        margin-top: 4px;
+        display: block;
+      }
+
+      /* MARQUEE */
+      .marquee-section {
+        overflow: hidden;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        background: var(--glass);
+        padding: 18px 0;
+      }
+      .marquee-track {
+        display: flex;
+        gap: 0;
+        animation: marquee 20s linear infinite;
+        white-space: nowrap;
+      }
+      .marquee-item {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 1rem;
+        letter-spacing: 0.2em;
+        color: rgba(240, 237, 230, 0.25);
+        padding: 0 48px;
+      }
+      .marquee-item.accent {
+        color: var(--electric);
+      }
+      @keyframes marquee {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* CATEGORIES */
+      .categories {
+        padding: 120px 48px;
+        position: relative;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 64px;
+      }
+      .section-label {
+        font-size: 0.7rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--electric);
+        margin-bottom: 12px;
+        display: block;
+      }
+      .section-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(2.5rem, 5vw, 5rem);
+        line-height: 0.95;
+        letter-spacing: 0.02em;
+      }
+      .see-all {
+        color: rgba(240, 237, 230, 0.4);
+        text-decoration: none;
+        font-size: 0.75rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: color 0.2s;
+        padding-bottom: 4px;
+        border-bottom: 1px solid transparent;
+      }
+      .see-all:hover {
+        color: var(--electric);
+        border-color: var(--electric);
+      }
+
+      .cat-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-rows: 360px 280px;
+        gap: 12px;
+      }
+
+      .cat-card {
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        background: #111;
+      }
+      .cat-card:first-child {
+        grid-row: 1 / 3;
+      }
+
+      .cat-card-bg {
+        position: absolute;
+        inset: 0;
+        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      .cat-card:hover .cat-card-bg {
+        transform: scale(1.06);
+      }
+
+      .cat-card-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.85) 0%,
+          transparent 60%
+        );
+      }
+
+      .cat-card-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 32px 28px;
+      }
+      .cat-tag {
+        font-size: 0.6rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--electric);
+        margin-bottom: 8px;
+        display: block;
+      }
+      .cat-name {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 2.2rem;
+        letter-spacing: 0.04em;
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+      .cat-count {
+        font-size: 0.75rem;
+        color: rgba(240, 237, 230, 0.45);
+      }
+
+      .cat-arrow {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition:
+          opacity 0.3s,
+          transform 0.3s;
+        transform: rotate(45deg) scale(0.8);
+      }
+      .cat-card:hover .cat-arrow {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+      }
+
+      /* FEATURED PRODUCTS */
+      .products {
+        padding: 0 48px 120px;
+      }
+
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+
+      .product-card {
+        cursor: pointer;
+        position: relative;
+        group: true;
+      }
+
+      .product-image {
+        aspect-ratio: 3/4;
+        background: #111;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 16px;
+      }
+
+      .product-image-bg {
+        position: absolute;
+        inset: 0;
+        transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      .product-card:hover .product-image-bg {
+        transform: scale(1.04);
+      }
+
+      .product-badge {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        background: var(--red);
+        color: #fff;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 4px 10px;
+      }
+      .product-badge.new {
+        background: var(--electric);
+        color: var(--black);
+      }
+
+      .product-actions {
+        position: absolute;
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        display: flex;
+        gap: 8px;
+        transform: translateY(8px);
+        opacity: 0;
+        transition: all 0.3s;
+      }
+      .product-card:hover .product-actions {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .product-actions .btn-primary {
+        flex: 1;
+        padding: 12px;
+        font-size: 0.65rem;
+        text-align: center;
+      }
+
+      .wishlist-btn {
+        width: 44px;
+        height: 44px;
+        background: rgba(8, 8, 8, 0.85);
+        border: 1px solid var(--border);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        color: var(--off-white);
+      }
+      .wishlist-btn:hover {
+        background: var(--red);
+        border-color: var(--red);
+      }
+
+      .product-name {
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 6px;
+        letter-spacing: 0.02em;
+      }
+      .product-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .product-price {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--off-white);
+      }
+      .product-price .old {
+        text-decoration: line-through;
+        color: rgba(240, 237, 230, 0.3);
+        font-weight: 400;
+        margin-right: 8px;
+        font-size: 0.8rem;
+      }
+      .product-colors {
+        display: flex;
+        gap: 6px;
+      }
+      .color-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      /* BRAND STRIP */
+      .brand-strip {
+        padding: 60px 48px;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 40px;
+      }
+      .brand-strip-label {
+        font-size: 0.65rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: rgba(240, 237, 230, 0.25);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .brand-logos {
+        display: flex;
+        gap: 60px;
+        align-items: center;
+        flex: 1;
+        justify-content: center;
+      }
+      .brand-name {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 1.6rem;
+        letter-spacing: 0.15em;
+        color: rgba(240, 237, 230, 0.15);
+        transition: color 0.3s;
+        cursor: pointer;
+      }
+      .brand-name:hover {
+        color: rgba(240, 237, 230, 0.7);
+      }
+
+      /* EDITORIAL SECTION */
+      .editorial {
+        padding: 120px 48px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+      }
+
+      .editorial-visual {
+        position: relative;
+        aspect-ratio: 4/5;
+        overflow: hidden;
+      }
+
+      .editorial-bg {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #1c1c1c 0%, #0a0a0a 100%);
+      }
+
+      .editorial-tag-box {
+        position: absolute;
+        bottom: 40px;
+        left: -24px;
+        background: var(--electric);
+        color: var(--black);
+        padding: 20px 28px;
+      }
+      .editorial-tag-box .tag-num {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 3rem;
+        line-height: 1;
+        display: block;
+      }
+      .editorial-tag-box .tag-text {
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      .editorial-content {
+        padding: 20px 0;
+      }
+
+      .editorial-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(3rem, 5vw, 6rem);
+        line-height: 0.9;
+        margin-bottom: 32px;
+      }
+      .editorial-title em {
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        font-weight: 400;
+        color: transparent;
+        -webkit-text-stroke: 1px var(--off-white);
+        display: block;
+      }
+
+      .editorial-body {
+        color: rgba(240, 237, 230, 0.5);
+        font-size: 0.9rem;
+        line-height: 1.8;
+        margin-bottom: 40px;
+        max-width: 440px;
+      }
+
+      .feature-list {
+        list-style: none;
+        margin-bottom: 48px;
+      }
+      .feature-list li {
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 0.85rem;
+        color: rgba(240, 237, 230, 0.6);
+      }
+      .feature-list li::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        background: var(--electric);
+        flex-shrink: 0;
+      }
+
+      /* NEWSLETTER */
+      .newsletter {
+        margin: 0 48px;
+        padding: 80px;
+        background: var(--glass);
+        border: 1px solid var(--border);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .newsletter::before {
+        content: "NØIR";
+        position: absolute;
+        right: -20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 20rem;
+        letter-spacing: -0.05em;
+        color: rgba(200, 255, 0, 0.03);
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      .nl-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(2.5rem, 4vw, 4.5rem);
+        line-height: 0.95;
+        letter-spacing: 0.02em;
+      }
+      .nl-title span {
+        color: var(--electric);
+      }
+
+      .nl-body {
+        color: rgba(240, 237, 230, 0.4);
+        font-size: 0.875rem;
+        line-height: 1.7;
+        margin-top: 16px;
+      }
+
+      .nl-form {
+        display: flex;
+        gap: 0;
+      }
+      .nl-input {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border);
+        border-right: none;
+        color: var(--off-white);
+        padding: 16px 24px;
+        font-family: "Inter", sans-serif;
+        font-size: 0.875rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .nl-input::placeholder {
+        color: rgba(240, 237, 230, 0.25);
+      }
+      .nl-input:focus {
+        border-color: var(--electric);
+      }
+      .nl-submit {
+        background: var(--electric);
+        color: var(--black);
+        border: none;
+        padding: 16px 32px;
+        font-family: "Inter", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.2s;
+        white-space: nowrap;
+      }
+      .nl-submit:hover {
+        background: #fff;
+      }
+
+      /* FOOTER */
+      footer {
+        margin-top: 120px;
+        padding: 60px 48px 40px;
+        border-top: 1px solid var(--border);
+      }
+
+      .footer-top {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 60px;
+        margin-bottom: 60px;
+      }
+
+      .footer-brand .logo {
+        display: block;
+        margin-bottom: 16px;
+        font-size: 2.5rem;
+      }
+      .footer-tagline {
+        color: rgba(240, 237, 230, 0.35);
+        font-size: 0.8rem;
+        line-height: 1.7;
+        max-width: 260px;
+        margin-bottom: 28px;
+      }
+      .social-links {
+        display: flex;
+        gap: 12px;
+      }
+      .social-link {
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(240, 237, 230, 0.4);
+        transition: all 0.2s;
+        text-decoration: none;
+        font-size: 0.7rem;
+        font-weight: 700;
+      }
+      .social-link:hover {
+        background: var(--electric);
+        color: var(--black);
+        border-color: var(--electric);
+      }
+
+      .footer-col h4 {
+        font-size: 0.65rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: rgba(240, 237, 230, 0.3);
+        margin-bottom: 20px;
+      }
+      .footer-col ul {
+        list-style: none;
+      }
+      .footer-col li {
+        margin-bottom: 12px;
+      }
+      .footer-col a {
+        color: rgba(240, 237, 230, 0.45);
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: color 0.2s;
+      }
+      .footer-col a:hover {
+        color: var(--off-white);
+      }
+
+      .footer-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 32px;
+        border-top: 1px solid var(--border);
+        font-size: 0.72rem;
+        color: rgba(240, 237, 230, 0.2);
+      }
+
+      /* SVG ARTWORK — hero figure */
+      .hero-svg-art {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Subtle grid overlay */
+      .hero-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(200, 255, 0, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(200, 255, 0, 0.03) 1px, transparent 1px);
+        background-size: 60px 60px;
+      }
+
+      /* SCROLL INDICATOR */
+      .scroll-indicator {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        z-index: 10;
+      }
+      .scroll-text {
+        font-size: 0.6rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: rgba(240, 237, 230, 0.3);
+        writing-mode: vertical-lr;
+      }
+      .scroll-line {
+        width: 1px;
+        height: 40px;
+        background: linear-gradient(
+          to bottom,
+          rgba(200, 255, 0, 0.8),
+          transparent
+        );
+        animation: scrollPulse 1.8s ease-in-out infinite;
+      }
+      @keyframes scrollPulse {
+        0%,
+        100% {
+          transform: scaleY(0.3) translateY(-10px);
+          opacity: 0;
+        }
+        50% {
+          transform: scaleY(1) translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .hero-right {
+          display: none;
+        }
+        .cat-grid {
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: auto;
+        }
+        .cat-card:first-child {
+          grid-row: auto;
+        }
+        .product-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .editorial {
+          grid-template-columns: 1fr;
+        }
+        nav {
+          padding: 20px 24px;
+        }
+        .nav-links {
+          display: none;
+        }
+        .categories,
+        .products {
+          padding-left: 24px;
+          padding-right: 24px;
+        }
+        .newsletter {
+          margin: 0 24px;
+          padding: 48px;
+          grid-template-columns: 1fr;
+        }
+        .footer-top {
+          grid-template-columns: 1fr 1fr;
+        }
+        footer {
+          padding: 40px 24px;
+        }
+        .brand-strip {
+          padding: 40px 24px;
+        }
+        .brand-logos {
+          gap: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cursor" id="cursor"></div>
+
+    <!-- NAV -->
+    <nav>
+      <a href="#" class="logo">NØ<span>I</span>R</a>
+     
+      
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-left">
+        <p class="hero-eyebrow">New Collection — SS 2026</p>
+        <h1 class="hero-title">
+          <span class="italic-line">Wear</span>
+          <span class="solid-line">THE</span>
+          <span class="solid-line">VOID</span>
+        </h1>
+        <p class="hero-desc">
+          Fashion stripped of pretense. Each piece is an act of intention — dark
+          materials, precise cuts, silence as a statement.
+        </p>
+        <div class="hero-cta">
+          <a href="login.php" class="btn-primary">Shop Now</a>
+          <a href="#" class="btn-ghost">View Lookbook</a>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="hero-image-bg"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-svg-art">
+          <svg
+            viewBox="0 0 500 700"
+            width="420"
+            height="580"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <!-- Background glow -->
+            <defs>
+              <radialGradient id="glow" cx="50%" cy="40%" r="50%">
+                <stop offset="0%" stop-color="#C8FF00" stop-opacity="0.08" />
+                <stop offset="100%" stop-color="#C8FF00" stop-opacity="0" />
+              </radialGradient>
+              <radialGradient id="bodyGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#2a2a2a" stop-opacity="1" />
+                <stop offset="100%" stop-color="#0d0d0d" stop-opacity="1" />
+              </radialGradient>
+              <linearGradient id="coatGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1e1e1e" />
+                <stop offset="100%" stop-color="#0a0a0a" />
+              </linearGradient>
+              <filter id="softShadow">
+                <feDropShadow
+                  dx="0"
+                  dy="8"
+                  stdDeviation="20"
+                  flood-color="#C8FF00"
+                  flood-opacity="0.12"
+                />
+              </filter>
+            </defs>
+            <!-- Glow bg -->
+            <ellipse cx="250" cy="300" rx="220" ry="320" fill="url(#glow)" />
+            <!-- Legs / trousers -->
+            <rect
+              x="185"
+              y="460"
+              width="52"
+              height="200"
+              rx="4"
+              fill="#111"
+              opacity="0.95"
+            />
+            <rect
+              x="263"
+              y="460"
+              width="52"
+              height="200"
+              rx="4"
+              fill="#111"
+              opacity="0.95"
+            />
+            <!-- Shoes -->
+            <ellipse cx="211" cy="658" rx="36" ry="10" fill="#0a0a0a" />
+            <rect
+              x="175"
+              y="645"
+              width="72"
+              height="22"
+              rx="3"
+              fill="#1a1a1a"
+            />
+            <ellipse cx="289" cy="658" rx="36" ry="10" fill="#0a0a0a" />
+            <rect
+              x="253"
+              y="645"
+              width="72"
+              height="22"
+              rx="3"
+              fill="#1a1a1a"
+            />
+            <!-- Shoe accent -->
+            <rect
+              x="175"
+              y="655"
+              width="72"
+              height="3"
+              rx="1"
+              fill="#C8FF00"
+              opacity="0.7"
+            />
+            <rect
+              x="253"
+              y="655"
+              width="72"
+              height="3"
+              rx="1"
+              fill="#C8FF00"
+              opacity="0.7"
+            />
+            <!-- Torso / coat body -->
+            <path
+              d="M155 240 L155 480 Q155 490 165 490 L335 490 Q345 490 345 480 L345 240 Z"
+              fill="url(#coatGrad)"
+              filter="url(#softShadow)"
+            />
+            <!-- Coat lapels -->
+            <path d="M250 250 L200 320 L175 250 Z" fill="#161616" />
+            <path d="M250 250 L300 320 L325 250 Z" fill="#161616" />
+            <!-- Coat centre line -->
+            <line
+              x1="250"
+              y1="260"
+              x2="250"
+              y2="490"
+              stroke="#C8FF00"
+              stroke-width="1"
+              opacity="0.3"
+            />
+            <!-- Coat buttons -->
+            <circle cx="250" cy="340" r="3" fill="#C8FF00" opacity="0.6" />
+            <circle cx="250" cy="380" r="3" fill="#C8FF00" opacity="0.6" />
+            <circle cx="250" cy="420" r="3" fill="#C8FF00" opacity="0.6" />
+            <!-- Arms - left -->
+            <rect
+              x="100"
+              y="245"
+              width="58"
+              height="200"
+              rx="16"
+              fill="#141414"
+            />
+            <!-- Arms - right -->
+            <rect
+              x="342"
+              y="245"
+              width="58"
+              height="200"
+              rx="16"
+              fill="#141414"
+            />
+            <!-- Hands -->
+            <ellipse cx="129" cy="452" rx="20" ry="14" fill="#1a1a1a" />
+            <ellipse cx="371" cy="452" rx="20" ry="14" fill="#1a1a1a" />
+            <!-- Neck -->
+            <rect
+              x="232"
+              y="175"
+              width="36"
+              height="75"
+              rx="14"
+              fill="#1a1a1a"
+            />
+            <!-- Head -->
+            <ellipse cx="250" cy="145" rx="62" ry="72" fill="url(#bodyGlow)" />
+            <!-- Face shadow / structure -->
+            <ellipse
+              cx="250"
+              cy="155"
+              rx="50"
+              ry="55"
+              fill="#141414"
+              opacity="0.4"
+            />
+            <!-- Eyes -->
+            <ellipse
+              cx="228"
+              cy="135"
+              rx="7"
+              ry="5"
+              fill="#C8FF00"
+              opacity="0.85"
+            />
+            <ellipse
+              cx="272"
+              cy="135"
+              rx="7"
+              ry="5"
+              fill="#C8FF00"
+              opacity="0.85"
+            />
+            <ellipse cx="228" cy="135" rx="3" ry="3" fill="#080808" />
+            <ellipse cx="272" cy="135" rx="3" ry="3" fill="#080808" />
+            <!-- Nose -->
+            <path
+              d="M250 145 L243 162 L257 162"
+              stroke="#333"
+              stroke-width="1.5"
+              fill="none"
+            />
+            <!-- Lips -->
+            <path
+              d="M237 172 Q250 180 263 172"
+              stroke="#555"
+              stroke-width="1.5"
+              fill="none"
+            />
+            <!-- Hair - slicked back -->
+            <path
+              d="M188 110 Q215 68 250 65 Q285 68 312 110 Q280 88 250 90 Q220 88 188 110 Z"
+              fill="#0d0d0d"
+            />
+            <!-- Shoulder structure -->
+            <path
+              d="M155 245 Q120 250 100 260 L100 265 Q125 254 158 250 Z"
+              fill="#1a1a1a"
+            />
+            <path
+              d="M345 245 Q380 250 400 260 L400 265 Q375 254 342 250 Z"
+              fill="#1a1a1a"
+            />
+            <!-- Pocket square -->
+            <path
+              d="M300 295 L320 295 L315 310 L305 305 Z"
+              fill="#C8FF00"
+              opacity="0.7"
+            />
+            <!-- Electric accent lines around figure -->
+            <line
+              x1="80"
+              y1="350"
+              x2="120"
+              y2="350"
+              stroke="#C8FF00"
+              stroke-width="0.5"
+              opacity="0.3"
+            />
+            <line
+              x1="380"
+              y1="280"
+              x2="420"
+              y2="280"
+              stroke="#C8FF00"
+              stroke-width="0.5"
+              opacity="0.3"
+            />
+            <line
+              x1="380"
+              y1="420"
+              x2="420"
+              y2="420"
+              stroke="#C8FF00"
+              stroke-width="0.5"
+              opacity="0.3"
+            />
+            <!-- Small floating elements -->
+            <rect
+              x="60"
+              y="200"
+              width="1"
+              height="40"
+              fill="#C8FF00"
+              opacity="0.2"
+            />
+            <rect
+              x="440"
+              y="380"
+              width="1"
+              height="60"
+              fill="#C8FF00"
+              opacity="0.2"
+            />
+          </svg>
+        </div>
+
+        <!-- Floating product tag -->
+        <div
+          style="
+            position: absolute;
+            top: 140px;
+            right: 48px;
+            background: rgba(8, 8, 8, 0.9);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            z-index: 10;
+            backdrop-filter: blur(8px);
+          "
+        >
+          <div
+            style="
+              font-size: 0.6rem;
+              letter-spacing: 0.2em;
+              color: var(--electric);
+              text-transform: uppercase;
+              margin-bottom: 6px;
+            "
+          >
+            Featured
+          </div>
+          <div style="font-size: 0.9rem; font-weight: 500; margin-bottom: 4px">
+            Void Overcoat
+          </div>
+          <div
+            style="font-size: 1rem; font-weight: 700; color: var(--electric)"
+          >
+            $289
+          </div>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-num">12K+</span
+            ><span class="stat-label">Products</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">98%</span
+            ><span class="stat-label">Satisfaction</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">82+</span
+            ><span class="stat-label">Brands</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scroll-indicator">
+        <div class="scroll-line"></div>
+        <span class="scroll-text">Scroll</span>
+      </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee-section">
+      <div class="marquee-track" id="marquee">
+        <span class="marquee-item">WOMEN'S FASHION</span>
+        <span class="marquee-item accent">✦</span>
+        <span class="marquee-item">MEN'S COLLECTION</span>
+        <span class="marquee-item accent">✦</span>
+        <span class="marquee-item">PREMIUM FOOTWEAR</span>
+        <span class="marquee-item accent">✦</span>
+        <span class="marquee-item">ACCESSORIES</span>
+        <span class="marquee-item accent">✦</span>
+        <span class="marquee-item">EXCLUSIVE DROPS</span>
+        <span class="marquee-item accent">✦</span>
+        <span class="marquee-item">FREE SHIPPING OVER $150</span>
+        <span class="marquee-item accent">✦</span>
+        <span class="marquee-item">WOMEN'S FASHION</span>
+        <span class="marquee-item accent">✦</span>
+        <span class="marquee-item">MEN'S COLLECTION</span>
+        <span class="marquee-item accent">✦</span>
+        <span class="marquee-item">PREMIUM FOOTWEAR</span>
+        <span class="marquee-item accent">✦</span>
+        <span class="marquee-item">ACCESSORIES</span>
+        <span class="marquee-item accent">✦</span>
+        <span class="marquee-item">EXCLUSIVE DROPS</span>
+        <span class="marquee-item accent">✦</span>
+        <span class="marquee-item">FREE SHIPPING OVER $150</span>
+        <span class="marquee-item accent">✦</span>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <section class="categories">
+      <div class="section-header">
+        <div>
+          <span class="section-label">Browse</span>
+          <h2 class="section-title">Shop by<br />Category</h2>
+        </div>
+        <a href="#" class="see-all">View All →</a>
+      </div>
+
+      <div class="cat-grid">
+        <!-- Women - tall card -->
+        <div class="cat-card">
+          <div
+            class="cat-card-bg"
+            style="
+              background: linear-gradient(135deg, #1a1520 0%, #0d0b0f 100%);
+            "
+          >
+            <svg
+              viewBox="0 0 400 700"
+              width="100%"
+              height="100%"
+              xmlns="http://www.w3.org/2000/svg"
+              style="position: absolute; inset: 0"
+            >
+              <defs>
+                <radialGradient id="wg" cx="50%" cy="30%" r="60%">
+                  <stop offset="0%" stop-color="#9B59B6" stop-opacity="0.15" />
+                  <stop offset="100%" stop-color="#9B59B6" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <rect width="400" height="700" fill="url(#wg)" />
+              <!-- Stylized dress form -->
+              <ellipse cx="200" cy="120" rx="50" ry="58" fill="#1a1520" />
+              <rect
+                x="175"
+                y="155"
+                width="50"
+                height="60"
+                rx="8"
+                fill="#1a1520"
+              />
+              <!-- Flowing dress -->
+              <path
+                d="M140 200 Q100 350 80 600 L320 600 Q300 350 260 200 Z"
+                fill="#200028"
+                opacity="0.9"
+              />
+              <path
+                d="M155 200 Q120 380 100 600"
+                stroke="#9B59B6"
+                stroke-width="0.8"
+                fill="none"
+                opacity="0.4"
+              />
+              <path
+                d="M200 200 L200 600"
+                stroke="#9B59B6"
+                stroke-width="0.5"
+                fill="none"
+                opacity="0.2"
+              />
+              <!-- Sparkle accents -->
+              <circle cx="280" cy="350" r="2" fill="#C8FF00" opacity="0.6" />
+              <circle cx="120" cy="450" r="1.5" fill="#C8FF00" opacity="0.4" />
+              <circle cx="310" cy="250" r="1" fill="#fff" opacity="0.5" />
+            </svg>
+          </div>
+          <div class="cat-card-overlay"></div>
+          <div class="cat-card-content">
+            <span class="cat-tag">Explore</span>
+            <div class="cat-name">Women's</div>
+            <div class="cat-count">2,480 items</div>
+          </div>
+          <div class="cat-arrow">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Men -->
+        <div class="cat-card">
+          <div
+            class="cat-card-bg"
+            style="
+              background: linear-gradient(135deg, #0d1520 0%, #080d18 100%);
+            "
+          >
+            <svg
+              viewBox="0 0 400 360"
+              width="100%"
+              height="100%"
+              xmlns="http://www.w3.org/2000/svg"
+              style="position: absolute; inset: 0"
+            >
+              <defs>
+                <radialGradient id="mg" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#2563EB" stop-opacity="0.12" />
+                  <stop offset="100%" stop-color="#2563EB" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <rect width="400" height="360" fill="url(#mg)" />
+              <!-- Suit jacket silhouette -->
+              <path
+                d="M120 80 L120 300 L280 300 L280 80 Q260 70 240 75 L220 110 L200 90 L180 110 L160 75 Q140 70 120 80 Z"
+                fill="#0d1a30"
+                opacity="0.9"
+              />
+              <!-- Lapels -->
+              <path d="M200 95 L165 145 L140 80 Z" fill="#0d1520" />
+              <path d="M200 95 L235 145 L260 80 Z" fill="#0d1520" />
+              <!-- Tie -->
+              <path
+                d="M200 100 L193 170 L200 190 L207 170 Z"
+                fill="#2563EB"
+                opacity="0.7"
+              />
+              <!-- Pocket -->
+              <rect
+                x="240"
+                y="155"
+                width="28"
+                height="18"
+                rx="2"
+                fill="#111d2e"
+              />
+              <rect
+                x="240"
+                y="155"
+                width="28"
+                height="4"
+                fill="#2563EB"
+                opacity="0.5"
+              />
+            </svg>
+          </div>
+          <div class="cat-card-overlay"></div>
+          <div class="cat-card-content">
+            <span class="cat-tag">Explore</span>
+            <div class="cat-name">Men's</div>
+            <div class="cat-count">1,920 items</div>
+          </div>
+          <div class="cat-arrow">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Footwear -->
+        <div class="cat-card">
+          <div
+            class="cat-card-bg"
+            style="
+              background: linear-gradient(135deg, #1a1200 0%, #120d00 100%);
+            "
+          >
+            <svg
+              viewBox="0 0 400 280"
+              width="100%"
+              height="100%"
+              xmlns="http://www.w3.org/2000/svg"
+              style="position: absolute; inset: 0"
+            >
+              <defs>
+                <radialGradient id="sg" cx="50%" cy="70%" r="50%">
+                  <stop offset="0%" stop-color="#C8FF00" stop-opacity="0.12" />
+                  <stop offset="100%" stop-color="#C8FF00" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <rect width="400" height="280" fill="url(#sg)" />
+              <!-- Sneaker silhouette -->
+              <path
+                d="M60 180 Q90 130 160 120 L280 120 Q340 125 360 155 L370 185 Q340 195 60 195 Z"
+                fill="#1a1a00"
+                opacity="0.95"
+              />
+              <!-- Sole -->
+              <path
+                d="M55 185 L375 185 Q380 185 380 190 L380 200 Q370 210 50 210 Q40 200 55 185 Z"
+                fill="#C8FF00"
+                opacity="0.25"
+              />
+              <!-- Laces -->
+              <line
+                x1="170"
+                y1="140"
+                x2="185"
+                y2="125"
+                stroke="#fff"
+                stroke-width="2"
+                opacity="0.3"
+              />
+              <line
+                x1="200"
+                y1="138"
+                x2="215"
+                y2="123"
+                stroke="#fff"
+                stroke-width="2"
+                opacity="0.3"
+              />
+              <line
+                x1="230"
+                y1="137"
+                x2="245"
+                y2="122"
+                stroke="#fff"
+                stroke-width="2"
+                opacity="0.3"
+              />
+              <!-- Tick / logo accent -->
+              <path
+                d="M280 150 Q320 140 350 155"
+                stroke="#C8FF00"
+                stroke-width="2.5"
+                fill="none"
+                opacity="0.7"
+              />
+            </svg>
+          </div>
+          <div class="cat-card-overlay"></div>
+          <div class="cat-card-content">
+            <span class="cat-tag">Explore</span>
+            <div class="cat-name">Footwear</div>
+            <div class="cat-count">890 items</div>
+          </div>
+          <div class="cat-arrow">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Accessories -->
+        <div class="cat-card">
+          <div
+            class="cat-card-bg"
+            style="
+              background: linear-gradient(135deg, #150a00 0%, #0d0800 100%);
+            "
+          >
+            <svg
+              viewBox="0 0 400 280"
+              width="100%"
+              height="100%"
+              xmlns="http://www.w3.org/2000/svg"
+              style="position: absolute; inset: 0"
+            >
+              <defs>
+                <radialGradient id="ag" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#FF6B35" stop-opacity="0.15" />
+                  <stop offset="100%" stop-color="#FF6B35" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <rect width="400" height="280" fill="url(#ag)" />
+              <!-- Bag silhouette -->
+              <rect
+                x="130"
+                y="100"
+                width="140"
+                height="110"
+                rx="8"
+                fill="#1a0e05"
+                stroke="#FF6B35"
+                stroke-width="0.8"
+                stroke-opacity="0.3"
+              />
+              <!-- Handle -->
+              <path
+                d="M165 100 Q165 65 200 65 Q235 65 235 100"
+                stroke="#FF6B35"
+                stroke-width="3"
+                fill="none"
+                opacity="0.6"
+              />
+              <!-- Clasp -->
+              <rect
+                x="190"
+                y="138"
+                width="20"
+                height="14"
+                rx="2"
+                fill="#FF6B35"
+                opacity="0.5"
+              />
+              <rect
+                x="194"
+                y="142"
+                width="12"
+                height="6"
+                rx="1"
+                fill="#FF6B35"
+                opacity="0.8"
+              />
+              <!-- Stitching lines -->
+              <rect
+                x="136"
+                y="106"
+                width="128"
+                height="98"
+                rx="6"
+                fill="none"
+                stroke="#FF6B35"
+                stroke-width="0.5"
+                stroke-dasharray="4 3"
+                stroke-opacity="0.2"
+              />
+            </svg>
+          </div>
+          <div class="cat-card-overlay"></div>
+          <div class="cat-card-content">
+            <span class="cat-tag">Explore</span>
+            <div class="cat-name">Access.</div>
+            <div class="cat-count">640 items</div>
+          </div>
+          <div class="cat-arrow">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED PRODUCTS -->
+    <section class="products">
+      <div class="section-header">
+        <div>
+          <span class="section-label">Handpicked</span>
+          <h2 class="section-title">New<br />Arrivals</h2>
+        </div>
+        <a href="#" class="see-all">View All →</a>
+      </div>
+
+      <div class="product-grid">
+        <!-- Product 1 -->
+        <div class="product-card">
+          <div class="product-image">
+            <div class="product-image-bg">
+              <svg
+                viewBox="0 0 300 400"
+                width="100%"
+                height="100%"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <linearGradient id="pg1" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#1a1a1a" />
+                    <stop offset="100%" stop-color="#0d0d0d" />
+                  </linearGradient>
+                </defs>
+                <rect width="300" height="400" fill="url(#pg1)" />
+                <!-- Coat product illustration -->
+                <path
+                  d="M75 120 L75 360 L225 360 L225 120 Q210 110 195 113 L175 150 L150 132 L125 150 L105 113 Q90 110 75 120 Z"
+                  fill="#1e1e1e"
+                />
+                <path d="M150 138 L118 178 L90 120 Z" fill="#161616" />
+                <path d="M150 138 L182 178 L210 120 Z" fill="#161616" />
+                <line
+                  x1="150"
+                  y1="148"
+                  x2="150"
+                  y2="360"
+                  stroke="#C8FF00"
+                  stroke-width="0.7"
+                  opacity="0.25"
+                />
+                <!-- Buttons -->
+                <circle
+                  cx="150"
+                  cy="220"
+                  r="2.5"
+                  fill="#C8FF00"
+                  opacity="0.5"
+                />
+                <circle
+                  cx="150"
+                  cy="255"
+                  r="2.5"
+                  fill="#C8FF00"
+                  opacity="0.5"
+                />
+                <circle
+                  cx="150"
+                  cy="290"
+                  r="2.5"
+                  fill="#C8FF00"
+                  opacity="0.5"
+                />
+                <circle
+                  cx="150"
+                  cy="325"
+                  r="2.5"
+                  fill="#C8FF00"
+                  opacity="0.5"
+                />
+              </svg>
+            </div>
+            <span class="product-badge new">New</span>
+            <div class="product-actions">
+        
+                  <path
+                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="product-name">Void Wool Overcoat</div>
+          <div class="product-meta">
+            <div class="product-colors">
+              <div class="color-dot" style="background: #111"></div>
+              <div class="color-dot" style="background: #3a3a3a"></div>
+              <div class="color-dot" style="background: #1a1a30"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="product-card">
+          <div class="product-image">
+            <div class="product-image-bg">
+              <svg
+                viewBox="0 0 300 400"
+                width="100%"
+                height="100%"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="300" height="400" fill="#0f0f0f" />
+                <radialGradient
+                  id="pg2g"
+                  cx="50%"
+                  cy="50%"
+                  r="50%"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <stop offset="0%" stop-color="#2563EB" stop-opacity="0.08" />
+                  <stop offset="100%" stop-opacity="0" />
+                </radialGradient>
+                <ellipse
+                  cx="150"
+                  cy="200"
+                  rx="140"
+                  ry="190"
+                  fill="url(#pg2g)"
+                />
+                <!-- Sneaker -->
+                <path
+                  d="M40 270 Q80 200 160 195 L245 195 Q285 200 290 235 L295 265 Q270 280 40 280 Z"
+                  fill="#141414"
+                />
+                <path
+                  d="M35 268 L298 268 L295 282 Q50 296 35 282 Z"
+                  fill="#1e1e1e"
+                />
+                <!-- Sole stripe -->
+                <rect
+                  x="35"
+                  y="272"
+                  width="260"
+                  height="5"
+                  fill="#C8FF00"
+                  opacity="0.5"
+                />
+                <!-- Laces detail -->
+                <path
+                  d="M155 215 L168 205"
+                  stroke="rgba(255,255,255,0.25)"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <path
+                  d="M175 212 L188 202"
+                  stroke="rgba(255,255,255,0.25)"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <path
+                  d="M195 210 L208 200"
+                  stroke="rgba(255,255,255,0.25)"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <!-- Logo swoosh -->
+                <path
+                  d="M238 235 Q265 222 285 238"
+                  stroke="#C8FF00"
+                  stroke-width="2.5"
+                  fill="none"
+                  opacity="0.8"
+                />
+              </svg>
+            </div>
+            <span class="product-badge" style="background: var(--red)"
+              >-30%</span
+            >
+            <div class="product-actions">
+             
+                  <path
+                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="product-name">Shadow Runner Low</div>
+          <div class="product-meta">
+            <div class="product-price"><span class="old">$180</span>$126</div>
+            <div class="product-colors">
+              <div class="color-dot" style="background: #0d0d0d"></div>
+              <div class="color-dot" style="background: #eee"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="product-card">
+          <div class="product-image">
+            <div class="product-image-bg">
+              <svg
+                viewBox="0 0 300 400"
+                width="100%"
+                height="100%"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="300" height="400" fill="#0d0d0d" />
+                <!-- Bag product -->
+                <rect
+                  x="70"
+                  y="130"
+                  width="160"
+                  height="140"
+                  rx="10"
+                  fill="#1a0e05"
+                />
+                <!-- Strap -->
+                <path
+                  d="M110 130 Q110 90 150 90 Q190 90 190 130"
+                  stroke="#FF6B35"
+                  stroke-width="4"
+                  fill="none"
+                  opacity="0.7"
+                />
+                <!-- Clasp hardware -->
+                <rect
+                  x="135"
+                  y="183"
+                  width="30"
+                  height="20"
+                  rx="3"
+                  fill="#2a1a0a"
+                />
+                <rect
+                  x="139"
+                  y="187"
+                  width="22"
+                  height="12"
+                  rx="2"
+                  fill="#FF6B35"
+                  opacity="0.7"
+                />
+                <!-- Brand stamp -->
+                <text
+                  x="150"
+                  y="230"
+                  font-family="serif"
+                  font-size="11"
+                  fill="#FF6B35"
+                  opacity="0.35"
+                  text-anchor="middle"
+                  letter-spacing="6"
+                >
+                  NØIR
+                </text>
+                <!-- Stitching -->
+                <rect
+                  x="76"
+                  y="136"
+                  width="148"
+                  height="128"
+                  rx="8"
+                  fill="none"
+                  stroke="#FF6B35"
+                  stroke-width="0.7"
+                  stroke-dasharray="5 4"
+                  stroke-opacity="0.25"
+                />
+              </svg>
+            </div>
+            <span class="product-badge new">New</span>
+            <div class="product-actions">
+             
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="product-name">Obsidian Tote Bag</div>
+          <div class="product-meta">
+            <div class="product-price">$195</div>
+            <div class="product-colors">
+              <div class="color-dot" style="background: #1a0e05"></div>
+              <div class="color-dot" style="background: #111"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 4 -->
+        <div class="product-card">
+          <div class="product-image">
+            <div class="product-image-bg">
+              <svg
+                viewBox="0 0 300 400"
+                width="100%"
+                height="100%"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="300" height="400" fill="#0f100f" />
+                <radialGradient
+                  id="pg4g"
+                  cx="50%"
+                  cy="30%"
+                  r="50%"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <stop offset="0%" stop-color="#C8FF00" stop-opacity="0.06" />
+                  <stop offset="100%" stop-opacity="0" />
+                </radialGradient>
+                <rect width="300" height="400" fill="url(#pg4g)" />
+                <!-- Hoodie -->
+                <path
+                  d="M75 150 L75 340 L225 340 L225 150 Q210 140 200 142 L185 175 Q175 165 150 162 Q125 165 115 175 L100 142 Q90 140 75 150 Z"
+                  fill="#111"
+                />
+                <!-- Hood -->
+                <path
+                  d="M100 142 Q115 175 150 162 Q185 175 200 142 Q190 95 150 90 Q110 95 100 142 Z"
+                  fill="#0d0d0d"
+                />
+                <!-- Kangaroo pocket -->
+                <rect
+                  x="100"
+                  y="240"
+                  width="100"
+                  height="60"
+                  rx="6"
+                  fill="#0d0d0d"
+                />
+                <!-- Drawstrings -->
+                <line
+                  x1="135"
+                  y1="162"
+                  x2="128"
+                  y2="210"
+                  stroke="rgba(255,255,255,0.15)"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="165"
+                  y1="162"
+                  x2="172"
+                  y2="210"
+                  stroke="rgba(255,255,255,0.15)"
+                  stroke-width="1.5"
+                />
+                <!-- NØIR embroidery -->
+                <text
+                  x="150"
+                  y="275"
+                  font-family="sans-serif"
+                  font-size="9"
+                  font-weight="bold"
+                  fill="#C8FF00"
+                  opacity="0.5"
+                  text-anchor="middle"
+                  letter-spacing="4"
+                >
+                  NØIR
+                </text>
+              </svg>
+            </div>
+            <span class="product-badge new">New</span>
+            <div class="product-actions">
+                  <path
+                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="product-name">Eclipse Oversized Hoodie</div>
+          <div class="product-meta">
+            <div class="product-price">$148</div>
+            <div class="product-colors">
+              <div class="color-dot" style="background: #111"></div>
+              <div class="color-dot" style="background: #1a1a1a"></div>
+              <div class="color-dot" style="background: #0d1520"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BRAND STRIP -->
+    <div class="brand-strip">
+      <span class="brand-strip-label">Our Brands</span>
+      <div class="brand-logos">
+        <span class="brand-name">VETEMENTS</span>
+        <span class="brand-name">APC</span>
+        <span class="brand-name">RICK OWENS</span>
+        <span class="brand-name">LEMAIRE</span>
+        <span class="brand-name">COS</span>
+        <span class="brand-name">ACNE</span>
+      </div>
+    </div>
+
+    <!-- EDITORIAL -->
+    <section class="editorial">
+      <div class="editorial-visual">
+        <div class="editorial-bg">
+          <svg
+            viewBox="0 0 480 600"
+            width="100%"
+            height="100%"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <radialGradient id="edG" cx="40%" cy="35%" r="55%">
+                <stop offset="0%" stop-color="#9B59B6" stop-opacity="0.15" />
+                <stop offset="100%" stop-opacity="0" />
+              </radialGradient>
+              <linearGradient id="edFig" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#1e1e1e" />
+                <stop offset="100%" stop-color="#0d0d0d" />
+              </linearGradient>
+            </defs>
+            <rect width="480" height="600" fill="url(#edG)" />
+            <!-- Grid lines -->
+            <line
+              x1="0"
+              y1="150"
+              x2="480"
+              y2="150"
+              stroke="rgba(200,255,0,0.04)"
+              stroke-width="1"
+            />
+            <line
+              x1="0"
+              y1="300"
+              x2="480"
+              y2="300"
+              stroke="rgba(200,255,0,0.04)"
+              stroke-width="1"
+            />
+            <line
+              x1="0"
+              y1="450"
+              x2="480"
+              y2="450"
+              stroke="rgba(200,255,0,0.04)"
+              stroke-width="1"
+            />
+            <line
+              x1="120"
+              y1="0"
+              x2="120"
+              y2="600"
+              stroke="rgba(200,255,0,0.04)"
+              stroke-width="1"
+            />
+            <line
+              x1="360"
+              y1="0"
+              x2="360"
+              y2="600"
+              stroke="rgba(200,255,0,0.04)"
+              stroke-width="1"
+            />
+            <!-- Figure - editorial look -->
+            <ellipse cx="240" cy="115" rx="55" ry="65" fill="url(#edFig)" />
+            <rect
+              x="218"
+              y="168"
+              width="44"
+              height="55"
+              rx="14"
+              fill="#1a1a1a"
+            />
+            <!-- Dramatic wide trousers -->
+            <path
+              d="M160 220 L185 550 L220 550 L240 380 L260 550 L295 550 L320 220 Z"
+              fill="#160024"
+              opacity="0.95"
+            />
+            <!-- Blouse / top -->
+            <path
+              d="M160 220 L185 355 L295 355 L320 220 Q300 210 280 213 L240 245 L200 213 Q180 210 160 220 Z"
+              fill="#200030"
+              opacity="0.9"
+            />
+            <!-- Belt -->
+            <rect
+              x="175"
+              y="350"
+              width="130"
+              height="12"
+              rx="3"
+              fill="#9B59B6"
+              opacity="0.5"
+            />
+            <rect
+              x="231"
+              y="348"
+              width="18"
+              height="16"
+              rx="2"
+              fill="#9B59B6"
+              opacity="0.7"
+            />
+            <!-- Head/hair drama -->
+            <ellipse cx="240" cy="100" rx="42" ry="52" fill="#1a1a1a" />
+            <path
+              d="M198 85 Q215 50 240 48 Q265 50 282 85 Q255 65 240 68 Q225 65 198 85 Z"
+              fill="#0d0d0d"
+            />
+            <!-- Hair falling down left -->
+            <path
+              d="M200 90 Q185 130 182 200"
+              stroke="#0d0d0d"
+              stroke-width="18"
+              fill="none"
+              stroke-linecap="round"
+              opacity="0.9"
+            />
+            <!-- Shoes pointed heels -->
+            <path
+              d="M185 548 Q175 555 155 556 L155 562 L210 562 L215 548 Z"
+              fill="#0d0d0d"
+            />
+            <path
+              d="M175 558 L175 575 L183 575 L183 558 Z"
+              fill="#9B59B6"
+              opacity="0.7"
+            />
+            <path
+              d="M268 548 Q278 555 298 556 L298 562 L243 562 L238 548 Z"
+              fill="#0d0d0d"
+            />
+            <path
+              d="M297 558 L297 575 L289 575 L289 558 Z"
+              fill="#9B59B6"
+              opacity="0.7"
+            />
+            <!-- Eyes dramatic -->
+            <ellipse
+              cx="222"
+              cy="108"
+              rx="7"
+              ry="5"
+              fill="#f0ede6"
+              opacity="0.8"
+            />
+            <ellipse
+              cx="258"
+              cy="108"
+              rx="7"
+              ry="5"
+              fill="#f0ede6"
+              opacity="0.8"
+            />
+            <ellipse cx="222" cy="108" rx="4" ry="4" fill="#0d0d0d" />
+            <ellipse cx="258" cy="108" rx="4" ry="4" fill="#0d0d0d" />
+            <!-- Accent line -->
+            <line
+              x1="60"
+              y1="580"
+              x2="420"
+              y2="580"
+              stroke="#C8FF00"
+              stroke-width="1"
+              opacity="0.15"
+            />
+          </svg>
+        </div>
+        <div class="editorial-tag-box">
+          <span class="tag-num">SS26</span>
+          <span class="tag-text">Editorial</span>
+        </div>
+      </div>
+
+      <div class="editorial-content">
+        <span class="section-label">About the Collection</span>
+        <h2 class="editorial-title">
+          <span>Dressed</span>
+          <em>in silence</em>
+        </h2>
+        <p class="editorial-body">
+          The SS26 collection is an exercise in restraint. 47 pieces. Every cut
+          intentional. Every material sourced for its silence — the way a black
+          wool doesn't shout, the way a matte sole doesn't announce itself.
+          Fashion as a private language.
+        </p>
+        <ul class="feature-list">
+          <li>Sustainable and ethically sourced materials</li>
+          <li>Free returns within 60 days, no questions asked</li>
+          <li>Each piece numbered and tracked to its maker</li>
+          <li>Carbon-neutral shipping on all orders</li>
+        </ul>
+        <a href="#" class="btn-primary">Explore the Collection</a>
+      </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <div class="newsletter">
+      <div>
+        <h2 class="nl-title">Stay in the <span>Loop.</span></h2>
+        <p class="nl-body">
+          Early access to drops, exclusive editorial content, and a 10% welcome
+          discount — for those who actually want it.
+        </p>
+      </div>
+      <div>
+        <div class="nl-form">
+          <input type="email" class="nl-input" placeholder="your@email.com" />
+          <button class="nl-submit">Subscribe</button>
+        </div>
+        <p
+          style="
+            margin-top: 12px;
+            font-size: 0.7rem;
+            color: rgba(240, 237, 230, 0.2);
+          "
+        >
+          No spam. Unsubscribe anytime. We respect your privacy.
+        </p>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="#" class="logo">NØ<span>I</span>R</a>
+          <p class="footer-tagline">
+            Fashion stripped of pretense. Dark materials, precise cuts, silence
+            as a statement.
+          </p>
+          <div class="social-links">
+            <a href="#" class="social-link">IG</a>
+            <a href="#" class="social-link">TW</a>
+            <a href="#" class="social-link">YT</a>
+            <a href="#" class="social-link">TK</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="#">Women's</a></li>
+            <li><a href="#">Men's</a></li>
+            <li><a href="#">Footwear</a></li>
+            <li><a href="#">Accessories</a></li>
+            <li><a href="#">Sale</a></li>
+            <li><a href="#">New Arrivals</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Help</h4>
+          <ul>
+            <li><a href="#">Size Guide</a></li>
+            <li><a href="#">Shipping Info</a></li>
+            <li><a href="#">Returns</a></li>
+            <li><a href="#">Track Order</a></li>
+            <li><a href="#">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About NØIR</a></li>
+            <li><a href="#">Sustainability</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Affiliates</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 NØIR. All rights reserved.</span>
+        <span>Privacy Policy · Terms of Service · Cookie Settings</span>
+        <span>Made with intention.</span>
+      </div>
+    </footer>
+
+    <script>
+      // Custom cursor
+      const cursor = document.getElementById("cursor");
+      document.addEventListener("mousemove", (e) => {
+        cursor.style.left = e.clientX + "px";
+        cursor.style.top = e.clientY + "px";
+      });
+
+      const hoverables = document.querySelectorAll(
+        "a, button, .cat-card, .product-card",
+      );
+      hoverables.forEach((el) => {
+        el.addEventListener("mouseenter", () => cursor.classList.add("expand"));
+        el.addEventListener("mouseleave", () =>
+          cursor.classList.remove("expand"),
+        );
+      });
+
+      // Intersection observer for fade-in animations
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.style.opacity = "1";
+              entry.target.style.transform = "translateY(0)";
+            }
+          });
+        },
+        { threshold: 0.1 },
+      );
+
+      document
+        .querySelectorAll(
+          ".product-card, .cat-card, .editorial-visual, .editorial-content",
+        )
+        .forEach((el) => {
+          el.style.opacity = "0";
+          el.style.transform = "translateY(24px)";
+          el.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+          observer.observe(el);
+        });
+    </script>
+  </body>
+</html>

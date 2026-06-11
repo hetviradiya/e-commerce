@@ -4,7 +4,7 @@ $conn = mysqli_connect(
     "localhost",
     "root",
     "",
-    "myproject"
+    "e-commerce"
 );
 
 if(!$conn){

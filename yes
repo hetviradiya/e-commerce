@@ -1,0 +1,64 @@
+NØIR — design prompt
+
+Use this to brief a designer, generate visuals, or guide AI image tools.
+
+Fashion · E-commerce
+Design identity
+Mood
+Dark editorial, minimal luxury
+Display face
+Bebas Neue — condensed, all-caps
+Body face
+Inter — 300–500 weights only
+Accent face
+Playfair Display — italic, outlined stroke
+Layout
+Asymmetric grid, 48px gutters
+Signature
+Electric lime on pure black; noise overlay
+
+Colour palette
+#080808 — Void black (bg)
+#F0EDE6 — Off-white (text)
+#C8FF00 — Electric lime (accent)
+#FF2D2D — Signal red (badges)
+#3A3A3A — Muted (secondary)
+#111–#1e1e1e — Card surfaces
+Page sections
+Fixed nav + cart badge
+Split hero (text + SVG figure)
+Scrolling marquee strip
+Category grid (2fr+1fr+1fr)
+4-column product grid
+Brand logo strip
+Editorial split (figure + copy)
+Newsletter CTA
+4-column footer
+Motion + interaction rules
+Custom lime cursor, expands on hover
+Cards fade+rise on scroll (IntersectionObserver)
+Product actions slide up on hover
+Category arrows rotate in on hover
+Hero image scales 1.06× on card hover
+Marquee — 20s linear infinite
+
+Full prompt — copy for Midjourney / DALL·E / Firefly
+
+Copy
+A high-fashion e-commerce homepage hero image. Pure black background (#080808). A tall editorial fashion figure wearing a dramatic oversized black wool overcoat with a single electric lime (#C8FF00) pocket square and lime-accented sole sneakers. Severe, precise styling — slicked-back hair, minimal jewellery. The figure is slightly off-centre-right. Left side: massive condensed sans-serif display text "WEAR THE VOID" in off-white (#F0EDE6), the word "Wear" rendered in outlined stroke Playfair Display italic. A fine electric lime horizontal rule beneath a small uppercase eyebrow label "New Collection SS 2026". Two CTA buttons — solid lime-filled primary, ghost secondary. Background has a subtle noise grain texture (4% opacity) and a faint orthogonal grid overlay in lime at 3% opacity. Floating product tag card top-right corner: matte black glass morphism card, lime accent text label "Featured", product name in off-white, price in lime. Overall mood: dark, severe, editorial luxury. Photographic realism with graphic typography overlay. Shot on medium format. —ar 16:9 —style raw
+
+Category card prompt (repeat per category)
+
+Copy
+A product category card for a dark fashion e-commerce site. Pure black background. Subject: [a flowing evening dress / a sharp tailored suit / a pair of minimalist sneakers / a structured leather tote bag]. The garment/product is rendered as a stylised line-art illustration with a single accent colour glow — [purple / blue / lime / amber]. Bottom-aligned text: small uppercase category label in the accent colour, large condensed white display font category name, small muted item count. An arrow icon appears top-right on hover. Overlay gradient fading from transparent (top 40%) to near-black (bottom). Clean, editorial, severe. —ar 2:3 —style raw
+
+Here's the full design prompt card for the NØIR page. It includes:
+
+Design tokens — exact typefaces, weights, mood, and layout rules
+Colour palette — all 6 hex values with their roles
+Section inventory — every block on the page named
+Motion rules — all hover and scroll interactions documented
+Hero image prompt — ready to paste into Midjourney, DALL·E, or Adobe Firefly (hit Copy)
+Category card prompt — fill in the bracketed placeholders for each of the 4 categories
+
+The Midjourney prompt uses --ar 16:9 --style raw to push toward photographic editorial rather than rendered CGI — swap --ar 2:3 on the category prompt for portrait crop.
